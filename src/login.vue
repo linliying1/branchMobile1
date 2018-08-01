@@ -25,7 +25,7 @@
   			
 	  		<div id="other">
 	     			
-	     			<router-link to="/forgetPassword">忘记密码</router-link>
+	     			<router-link to="/forgetPassword/phoneNum">忘记密码?</router-link>
 	     			<router-link to="/register">商户注册<img src="./assets/login/leave_for.png"/></a></router-link>
 	     		
 	     	</div>
@@ -73,7 +73,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style >
 		*{
 			-moz-box-sizing: border-box; /*Firefox3.5+*/
 			-webkit-box-sizing: border-box; /*Safari3.2+*/
@@ -82,7 +82,7 @@ export default {
 			box-sizing: border-box;
 		}
 		.loginDiv{
-	 
+	    
 			width: 100%;
 			height: 100%;
 			margin: 0 auto;
@@ -90,15 +90,17 @@ export default {
 			background-size: 100% 100% ;
 			padding: 0 54px;
 			margin-right: 0;
-		
+			padding-top: 160px;
 			
 		}
 		.loginDiv #logo{
 			width: 645px;
-			margin: 0 auto;
+		
 			height:58px;
-			margin-top: 160px;
-			
+		
+			display: block;
+			margin: 0 auto;
+		
 		}
 		.loginDiv h3{
 			font-family: "微软雅黑";
@@ -114,10 +116,10 @@ export default {
 			padding: 0 32px;
 			padding-top: 10px;
 			width:100%;
-			height: 612px;
+			/*height: 612px;*/
 			border-radius: 10px;
 			background:rgba(0,0,0,.28);
-			
+				padding-bottom: 35px;
 		}
 		.logingMain .input{
 			display: inline-block;
@@ -161,12 +163,19 @@ export default {
 		font-size: 30px;
 		letter-spacing: 0;
 		}
-		
+		input{
+		height: 80px;
+		border-radius: 5px;
+		background: #FFFFFF;
+		border: 1px solid #ccc;/*px*/
+		text-indent: 20px;
+		outline: none;
+	}
 		
 		.loginDiv .logingMain input{
 			border: none;
 			vertical-align: bottom;
-			margin-bottom: 20px;
+			/*margin-bottom: 20px;*/
 	   	background:rgba(0,0,0,0);
 	   	color: #FFFFFF;
 	   	font-size: 30px;
@@ -174,21 +183,24 @@ export default {
 	   	
 		}
 		.logingMain #verification{
-			width: 390px;
-			margin-right: 20px;
+			/*width: 390px;*/
+			width:70%;
+			/*margin-right: 20px;*/
 		}
 		
 		
 			.logingMain #verification input{
-			width: 70%;
+			width:70%;
 		}
 		#verification_code{
-			width: 160px;
+			width: 25%;
+		
 			height: 78px;
 			background: #fff;
 			display: inline-block;
-			vertical-align: bottom;
-			
+			/*vertical-align: bottom;*/
+			margin-top: 30px;
+			float: right;
 		}
 		.logingMain #tips{
 			margin: 24px 0;
@@ -232,4 +244,7 @@ export default {
 			width: 37px;
 			height: 32px;
 		}
+		
+		
+	
 </style>
