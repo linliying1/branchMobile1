@@ -1,5 +1,5 @@
 <template>
-	<div class="selection-component">
+	<div class="selection-component" :class="{'grayBorder':!init}">
 		<div class="selection-show" @click="toggleDrop">
 			
 			<span :class="{'gray':init}">{{init?'请选择':selections[nowIndex].name}}</span>
@@ -31,6 +31,7 @@
 			selections(){
 				console.log(this.selections[this.nowIndex].name+"改变了")
 				this.init = true
+				 
 			}
 		},
 				
@@ -47,7 +48,7 @@
 		methods: {
 			toggleDrop(){
 				this.isDrop = !this.isDrop
-				this.init = true
+//				this.init = true
 			},
 			choseSelection(index){
 				this.nowIndex = index
@@ -65,7 +66,9 @@
 	.gray{
 		color:rgb(153,153,153) !important;
 	}
-	
+	.grayBorder{
+		border:  1px solid #ccc !important;/*px*/
+	}
 	
 	
 	
@@ -170,9 +173,9 @@
 	right: 2px;
 	top: 2px;
 	/*linear-gradient(to right,red,yellow,red)*/
-	border-left:4px solid  #c9c9c9;/*px*/
+	border-left:1px solid  #c9c9c9;/*px*/
 }
-.rightRig::after{
+.rightRig::after{ 
 	background: linear-gradient(red,blue);
 	content: '';
 	z-index: -1;

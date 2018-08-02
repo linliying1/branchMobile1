@@ -8,7 +8,7 @@
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>商户名称:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 			</div>
 			<div class="item">
 				<img style="position: relative;top: -14px;" src="../assets/login/mandatory.png" />
@@ -19,23 +19,23 @@
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>法人代表:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>用户名:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>密码:</span>
-		 		<input type="password" v-model="password1" />
+		 		<input @blur="check" type="password" v-model="password1" />
 			</div>
 		
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>重复密码:</span>
-				<input :class="{'redBoeder':unPass}" type="password" v-model.lazy="password2" />
+				<input @blur="check" :class="{'redBorder':unPass}" type="password" v-model.lazy="password2" />
 				
 			</div>
 			<div v-if="unPass" class="tips">
@@ -55,37 +55,42 @@
 			<div class="item" id="phone">
 				<img src="../assets/login/mandatory.png" />
 				<span>手机号码:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 				<div class="rightDiv">获取验证码</div>
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>验证码:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>电子邮箱:</span>
-				<input type="text" />
+				<input @blur="check" type="email" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>详细地址:</span>
-				<input type="text" />
+				<input @blur="check" type="text" />
 			</div>
 			<div class="item" id="location">
 				<img src="../assets/login/mandatory.png" />
 				<span>地图坐标:</span>
-				<input type="text" />
-				<div class="rightDiv"><a style="color: #FFFFFF;text-decoration: none;" href="https://lbs.amap.com/console/show/picker">拾取</a></div>
+				<input @blur="check" type="text" />
+				<div class="rightDiv"><a style="color: #FFFFFF;text-decoration: none;" target="_blank" href="https://lbs.amap.com/console/show/picker">拾取</a></div>
 				
 			</div>
+			<div v-if="allShouldFilled" class="tips">
+	  				<span>请输入必填信息！</span>
+	  			
+	  		</div>
 			<Btn :handleText="content" @btnClick1='toRegister' ></Btn>
 		</div>
 	</div>
 </template>
 
 <script>
+import $ from 'jquery'
 import Btn from './btn'
 import VSelection from './selection'
 import { province, city} from '@/assets/vue-area.js'
@@ -115,15 +120,56 @@ import { type, typeDetail} from '@/assets/type.js'
 		      this.typeL = [...type]
 		 },
 		methods: {
+			check(){
+//				当输入框有数据时将边框颜色变成正常，移除未填写类名onerror
+				for(let i=0;i<$('.item input').length;i++){
+					
+					if($('.item input').eq(i).val()!=''){
+						$('.item input').eq(i).css('border-color','#ccc').removeClass('onError') ;
+						
+					}
+						
+					
+				}
+			
+			},
 			toRegister(){
 				
 				if(this.password1!=this.password2){
 					this.unPass = true,
-					this.password1 =this.password2=''
+					this.password1 = this.password2=''
 					
 				}else{
-					this.unPass = false,
-					console.log('点击注册')
+					this.unPass = false
+					
+//					提交前检测所有input是否都有数据，将未填写的添加addClass('onError')类名
+					for(let i=0;i<$('.item input').length;i++){
+						console.log($('.item input').eq(i).val());
+						if($('.item input').eq(i).val()==''){
+							$('.item input').eq(i).css('border-color','red').addClass('onError');
+							this.allShouldFilled = true;//提示显示
+						}else{
+							this.allShouldFilled = false;
+						}
+					}
+//					提交前检测所有selections是否都有数据
+					for(let i=0;i<$('.selection-component').length;i++){
+						console.log($('.selection-component .selection-show span').eq(i).html());
+						
+						if($('.selection-component .selection-show span').eq(i).html()=='请选择'){
+							$('.selection-component .selection-show span').eq(i).parent().parent().css('border-color','red').addClass('onError');
+							this.allShouldFilled = true;
+						}else{
+							$('.selection-component .selection-show span').eq(i).parent().parent().css('border-color','#ccc')
+						}
+					}
+					
+					//统计未填写类名的数目，为0则全部填写
+					this.numError = $(".item .onError").length;
+					console.log(this.numError)
+					if(this.numError==0){
+						console.log('已经全部填写')
+					}
 				}
 			},
 			onProvincechange(data){
@@ -144,9 +190,11 @@ import { type, typeDetail} from '@/assets/type.js'
 		
 		data(){
 			return {
+				numError: 0,
 				password1: '',
 				password2: '',
 				unPass:false,
+				allShouldFilled:false,
 				
 				content:'立即注册',			
 				selected: { },
@@ -166,7 +214,7 @@ import { type, typeDetail} from '@/assets/type.js'
 </script>
 
 <style>
-	.redBoeder{
+	.redBorder{
 		border-color:#f0232c !important;
 	}
 	.bar{

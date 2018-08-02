@@ -5,7 +5,7 @@
   		<div class="logingMain">
   			<div id="username" class="input">
   				<img src="./assets/login/user_name.png" />
-  				<input type="text" placeholder="用户名"/>
+  				<input style="width: 80%;" type="text" placeholder="用户名"/>
   			</div>
   			<div id="password" class="input">
   				<img src="./assets/login/password.png" />
