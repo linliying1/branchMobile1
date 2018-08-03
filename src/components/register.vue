@@ -19,23 +19,24 @@
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>法人代表:</span>
-				<input @blur="check" type="text" />
+				<input id="faren" maxlength="20"  @blur="check" type="text" />
+			
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>用户名:</span>
-				<input @blur="check" type="text" />
+				<input @blur="check" placeholder="6-16个字符之间" type="text" maxlength="20" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>密码:</span>
-		 		<input @blur="check" type="password" v-model="password1" />
+		 		<input @blur="check" placeholder="6-16个字符之间" type="password" v-model="password1" maxlength="20" />
 			</div>
 		
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>重复密码:</span>
-				<input @blur="check" :class="{'redBorder':unPass}" type="password" v-model.lazy="password2" />
+				<input maxlength="20" placeholder="6-16个字符之间" @blur="check" :class="{'redBorder':unPass}" type="password" v-model.lazy="password2" />
 				
 			</div>
 			<div v-if="unPass" class="tips">
@@ -55,18 +56,18 @@
 			<div class="item" id="phone">
 				<img src="../assets/login/mandatory.png" />
 				<span>手机号码:</span>
-				<input @blur="check" type="text" />
-				<div class="rightDiv">获取验证码</div>
+				<input maxlength="11" @blur="check" type="text" />
+				<div class="rightDiv" :class="{'blueBac':canGetCode}">获取验证码</div>
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>验证码:</span>
-				<input @blur="check" type="text" />
+				<input  maxlength="4" @blur="check" type="text" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
 				<span>电子邮箱:</span>
-				<input @blur="check" type="email" />
+				<input maxlength="20" @blur="check" type="email" />
 			</div>
 			<div class="item">
 				<img src="../assets/login/mandatory.png" />
@@ -81,7 +82,7 @@
 				
 			</div>
 			<div v-if="allShouldFilled" class="tips">
-	  				<span>请输入必填信息！</span>
+	  				<span>请确保数据合法性及必填信息已填写！</span>
 	  			
 	  		</div>
 			<Btn :handleText="content" @btnClick1='toRegister' ></Btn>
@@ -100,7 +101,6 @@ import { type, typeDetail} from '@/assets/type.js'
 		  watch: {
 		    selected: function () {	
 		      this.cityL = city.filter((item) => item.parentId === this.selected.code)
-//		      this.citySelected.name = '请选择'
                console.log('selectPro:'+this.selected.name)
 		      console.log('citySelected:'+this.citySelected.name)
 		    },
@@ -121,14 +121,34 @@ import { type, typeDetail} from '@/assets/type.js'
 		 },
 		methods: {
 			check(){
-//				当输入框有数据时将边框颜色变成正常，移除未填写类名onerror
+//				当输入框有数据时且合法时，将边框颜色变成正常，移除未填写类名onerror
 				for(let i=0;i<$('.item input').length;i++){
 					
 					if($('.item input').eq(i).val()!=''){
-						$('.item input').eq(i).css('border-color','#ccc').removeClass('onError') ;
 						
+						if(i==2||i==3||i==4){
+						if (/^\w{6,16}$/.test($('.item input').eq(i).val())) {
+							$('.item input').eq(i).css('border-color','#ccc').removeClass('onError') ;
+							//长度是否在6-16之间
+						}
+					}else if(i==6){
+						if(/^1\d{10}$/.test($('.item input').eq(6).val()) ){
+							$('.item input').eq(i).css('border-color','#ccc').removeClass('onError');
+							//电话合法时发送验证码按钮颜色变蓝色
+							this.canGetCode = true;
+						}
+					}else if(i==8){
+						if(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-]{2,5})+/.test($('.item input').eq(8).val())){
+							$('.item input').eq(8).css('border-color','#ccc').removeClass('onError');
+							//邮箱
+						}
+					}else{
+							$('.item input').eq(i).css('border-color','#ccc').removeClass('onError') ;
 					}
 						
+					
+					}
+					
 					
 				}
 			
@@ -144,13 +164,34 @@ import { type, typeDetail} from '@/assets/type.js'
 					
 //					提交前检测所有input是否都有数据，将未填写的添加addClass('onError')类名
 					for(let i=0;i<$('.item input').length;i++){
-						console.log($('.item input').eq(i).val());
+						
 						if($('.item input').eq(i).val()==''){
-							$('.item input').eq(i).css('border-color','red').addClass('onError');
-							this.allShouldFilled = true;//提示显示
-						}else{
-							this.allShouldFilled = false;
+							if(i!=5){
+								$('.item input').eq(i).css('border-color','red').addClass('onError');
+							}
 						}
+
+					if(i==2||i==3||i==4){
+						if (!/^\w{6,16}$/.test($('.item input').eq(i).val())) {
+							$('.item input').eq(i).css('border-color','red').addClass('onError');
+							console.log(i+'不合法')
+						}
+					
+					}
+					if(i==6){
+						if(!/^1\d{10}$/.test($('.item input').eq(6).val()) ){
+							$('.item input').eq(i).css('border-color','red').addClass('onError');
+							
+							console.log('手机号不合法')
+						}
+					}
+					if(i==8){
+						if(!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-]{2,5})+/.test($('.item input').eq(8).val())){
+							$('.item input').eq(8).css('border-color','red').addClass('onError');
+						}
+					}
+						
+					
 					}
 //					提交前检测所有selections是否都有数据
 					for(let i=0;i<$('.selection-component').length;i++){
@@ -166,9 +207,13 @@ import { type, typeDetail} from '@/assets/type.js'
 					
 					//统计未填写类名的数目，为0则全部填写
 					this.numError = $(".item .onError").length;
-					console.log(this.numError)
+					console.log(this.numError+"error数目")
 					if(this.numError==0){
+//						this.allShouldFilled = false;
+						$('.tips span').html('注册成功，即将跳转到登录页面……').css('color','green')
 						console.log('已经全部填写')
+					}else{
+						this.allShouldFilled = true;
 					}
 				}
 			},
@@ -195,6 +240,7 @@ import { type, typeDetail} from '@/assets/type.js'
 				password2: '',
 				unPass:false,
 				allShouldFilled:false,
+				canGetCode: false,
 				
 				content:'立即注册',			
 				selected: { },
@@ -216,6 +262,10 @@ import { type, typeDetail} from '@/assets/type.js'
 <style>
 	.redBorder{
 		border-color:#f0232c !important;
+	}
+	.blueBac{
+		background: #0093E5 !important;
+		color: #FFFFFF !important;
 	}
 	.bar{
 		background: rgb(0,147,229);
