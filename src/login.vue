@@ -13,12 +13,12 @@
   			</div>
   			<div id="verification" class="input">
   				<img src="./assets/login/verification_code.png"/>
-  				<input type="text" placeholder="验证码"/>
+  				<input type="text" @blur="checkLpicma"  v-model="picLyanzhengma" placeholder="验证码"/>
   			</div>
-  			<div id="verification_code"></div>
+  			<input type="button" id="verification_code" @click="createCode" v-model="checkCode"></input>
   			
   			<div v-if="unPass" id="tips">
-  				<img src="./assets/login/reminder.png" /><span>{{tipsText[1].text}}</span>
+  				<img src="./assets/login/reminder.png" /><span>{{tipsText}}</span>
   			</div>
   		  <!--登录组件-->
   			<login-btn :handleText="loginText" @btnClick1='loginClick()'></login-btn>
@@ -37,36 +37,69 @@
 </template>
 
 <script>
+	import $ from "jQuery"
 	import LoginBtn from "@/components/btn"
 export default {
   name: 'login',
   components: {
   	LoginBtn
   },
+ created(){
+ 	this.createCode()
+ },
   methods: {
+  	createCode(){
+//		this.unPass = false;
+		  var code = ""; 
+//		  	console.log(code)
+		  var codeLength = 4;//验证码的长度 
+		  var random = new Array(0,1,2,3,4,5,6,7,8,9,'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R', 
+		     'S','T','U','V','W','X','Y','Z');//随机数 
+		  for(var i = 0; i < codeLength; i++) {
+		   //循环操作 
+		   var index = Math.floor(Math.random()*36);//取得随机数的索引（0~35） 
+		   code += random[index];//根据索引取得随机数加到code上 
+		  } 
+		  this.checkCode = code;//把code值赋给验证码 
+		},
+  	checkLpicma(){   
+		  this.picLyanzhengma.toUpperCase();//取得输入的验证码并转化为大写   
+		  if(this.picLyanzhengma == '') {
+		  	this.unPass = true;
+		    this.tipsText = "请输入验证码"
+		   
+		  }else if(this.picLyanzhengma.toUpperCase() != this.checkCode ) { 
+		   //若输入的验证码与产生的验证码不一致时 
+		   this.unPass = true;
+		   this.tipsText = "验证码不正确"
+//		   $("#tips span").text("验证码不正确")
+		   this.createCode();//刷新验证码 
+		   this.picLyanzhengma = '';
+		  }else {
+			this.unPass = false;
+		   return true;
+		  } 
+		},
   	loginClick(){
   		//点击登录检查合法性，合法后发送登录请求
-  		console.log('loginClick')
+//		if(!this.picLyanzhengma){
+//			this.unPass = true
+//			this.tipsText = "请输入验证码"
+//		}
+  		if(!this.unPass){
+  			this.picLyanzhengma = '';
+  			console.log('loginClick')
+  		}
   	}
   },
   data () {
     return {
      loginText: "登录",
-     unPass:true,
-     tipsText: [
-     	{
-     		id:1,
-     		text:"验证码不能为空"
-     	},
-     	{
-     		id:2,
-     		text:"验证码输入有误"
-     	},
-     	{
-     		id:3,
-     		text:"输入的用户名或密码有误"
-     	}
-     ]
+     unPass:false,
+     picLyanzhengma: '',
+     checkCode: '',
+     
+     tipsText: ''
   }
 }
  }
@@ -193,13 +226,17 @@ export default {
 			width:70%;
 		}
 		#verification_code{
+			text-align: left;
 			width: 25%;
-		
+			color:blueviolet;
 			height: 78px;
-			background: #fff;
+			background: #CCCCCC;
 			display: inline-block;
+			letter-spacing: 4px;
 			/*vertical-align: bottom;*/
 			margin-top: 30px;
+			padding-left: 14px;
+			border-radius: 50% 50%;
 			float: right;
 		}
 		.logingMain #tips{

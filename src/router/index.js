@@ -6,7 +6,9 @@ import ForgetPassPage from '@/components/forgetPass'
 import Email from '@/components/email'
 import PhoneNum from '@/components/phoneNum'
 import ResetPassword from '@/components/resetPassword'
+import vueResource from 'vue-resource'
 
+Vue.use(vueResource)
 Vue.use(Router)
 
 export default new Router({

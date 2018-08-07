@@ -13,6 +13,7 @@
     "lib-flexible": "^0.3.2",
     "request": "^2.87.0",
     "vue": "^2.3.3",
+    "vue-resource": "^1.5.1",
     "vue-router": "^2.6.0"
   },
   "devDependencies": {

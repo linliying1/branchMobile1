@@ -3,7 +3,7 @@
   			<p>使用注册时的手机号码找回</p>
   			<p><input type="text" placeholder="请输入手机号码" v-model="phoneNumber"  @change="changeCount()"/></p>
   			<p><input type="text" placeholder="请输入短信验证码" />
-  				<input type="button" :class="{'sended':hadSended}" value="获取验证码" />
+  				<input type="button" :class="{'sended':hadSended}" value="获取验证码" @click="sendMess" />
   			</p>
   			<div v-if="unPass" class="tips">
   				<img src="../assets/login/reminder.png" /><span>{{tipsText[1].text}}</span>
@@ -28,10 +28,23 @@ import Btn from './btn'
 				}
 			}
 		},
+		http: {
+		  headers: {'Content-Type': 'application/json'}
+		},
 		methods: {
 			toReset(){
 //				if('验证通过')
 				   this.$router.replace('/resetPassword')
+			},
+			sendMess(){
+				var param = {"phoneNum":"13420109570","smsType":7}
+				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/sendSmsVerifyCode',param)
+					.then((data)=>{
+						console.log(12345)
+		               
+					},(err)=>{
+						console.log(err)
+					})
 			}
 		},
 		data(){
