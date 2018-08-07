@@ -5,15 +5,15 @@
   		<div class="logingMain">
   			<div id="username" class="input">
   				<img src="./assets/login/user_name.png" />
-  				<input style="width: 80%;" type="text" placeholder="用户名"/>
+  				<input v-model="username" style="width: 80%;" type="text" placeholder="用户名"/>
   			</div>
   			<div id="password" class="input">
   				<img src="./assets/login/password.png" />
-  				<input style="letter-spacing: 2px;font-size: 16px;width: 80%;" type="password" placeholder="密码"/>
+  				<input v-model="password" style="letter-spacing: 2px;font-size: 16px;width: 80%;" type="password" placeholder="密码"/>
   			</div>
   			<div id="verification" class="input">
   				<img src="./assets/login/verification_code.png"/>
-  				<input type="text" @blur="checkLpicma"  v-model="picLyanzhengma" placeholder="验证码"/>
+  				<input type="text"   v-model="picLyanzhengma" placeholder="验证码"/>
   			</div>
   			<input type="button" id="verification_code" @click="createCode" v-model="checkCode"></input>
   			
@@ -45,7 +45,9 @@ export default {
   	LoginBtn
   },
  created(){
- 	this.createCode()
+ 	this.createCode(),
+ 	this.username = this.$cookieStore.getCookie( 'username')
+// 	this.password= this.$cookieStore.getCookie( 'password')
  },
   methods: {
   	createCode(){
@@ -81,14 +83,67 @@ export default {
 		  } 
 		},
   	loginClick(){
+  		
+			this.$cookieStore.setCookie( 'username' ,this.username,60);
+			if(!this.password){
+				this.$cookieStore.setCookie( 'password' ,this.$md5(this.password))
+			}
+//			global.isLogin = true
+			
+				 this.$router.push({
+          		 path: '/home'
+          	 });
+		
+//			alert('读取cookie:+username:'+this.$cookieStore.getCookie('username')+'password:'+this.$cookieStore.getCookie( 'password'))
+//		this.$cookieStore.delCookie( 'username')
+//		this.$cookieStore.delCookie( 'password')
+
+				
+		
+				
+				
+				
   		//点击登录检查合法性，合法后发送登录请求
-//		if(!this.picLyanzhengma){
-//			this.unPass = true
-//			this.tipsText = "请输入验证码"
-//		}
-  		if(!this.unPass){
-  			this.picLyanzhengma = '';
-  			console.log('loginClick')
+  		 this.picLyanzhengma.toUpperCase();//取得输入的验证码并转化为大写   
+		 	if(!this.username||!this.password){
+		    this.unPass = true
+			  this.tipsText = "用户名或密码不能为空"
+		  }else if(this.picLyanzhengma == '') {
+		  	this.unPass = true;
+		    this.tipsText = "请输入验证码"
+		  }else if(this.picLyanzhengma.toUpperCase() != this.checkCode ) { 
+		   //若输入的验证码与产生的验证码不一致时 
+		    this.unPass = true;
+		    this.tipsText = "验证码不正确"
+		    this.picLyanzhengma = '';
+		    this.createCode();//刷新验证码 
+		  }else {
+			  this.unPass = false;
+		  }
+		if(!this.unPass){
+  			//通过验证，向后台发送登录请求
+  			console.log('loginClick');
+  			console.log('helloworld-Md5'+this.$md5(this.password))
+  			
+				var param = {
+					"userName":this.username,
+					"password":this.$md5(this.password)
+				}
+//				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/login',param)
+//					.then((data)=>{
+//						console.log(data)
+//		      	 alert('登录成功！')  
+//	      		 this.$router.push({
+//        		 path: '/home'
+//        	 });
+//		      		
+//					},(err)=>{
+//						console.log(err)
+//					})
+
+				
+			
+  			
   		}
   	}
   },
@@ -98,8 +153,9 @@ export default {
      unPass:false,
      picLyanzhengma: '',
      checkCode: '',
-     
-     tipsText: ''
+     tipsText: '',
+     username: '',
+     password: ''
   }
 }
  }
@@ -226,7 +282,7 @@ export default {
 			width:70%;
 		}
 		#verification_code{
-			text-align: left;
+			text-align: center;
 			width: 25%;
 			color:blueviolet;
 			height: 78px;
@@ -235,7 +291,7 @@ export default {
 			letter-spacing: 4px;
 			/*vertical-align: bottom;*/
 			margin-top: 30px;
-			padding-left: 14px;
+			padding-right: 20px;
 			border-radius: 50% 50%;
 			float: right;
 		}
@@ -280,6 +336,8 @@ export default {
 		#other a img{
 			width: 37px;
 			height: 32px;
+			position: relative;
+			top: 5px;
 		}
 		
 		

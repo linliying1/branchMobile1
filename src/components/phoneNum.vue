@@ -6,7 +6,7 @@
   				<input type="button" :class="{'sended':hadSended}" value="获取验证码" @click="sendMess" />
   			</p>
   			<div v-if="unPass" class="tips">
-  				<img src="../assets/login/reminder.png" /><span>{{tipsText[1].text}}</span>
+  				<img src="../assets/login/reminder.png" /><span>{{tipsText}}</span>
   			</div>
   			<btn style="background: #b3b3b3;margin-top: 0px;" :class="{'nextBlue':next}" :handleText='content' @btnClick1="toReset"></btn>
   			<div class="notice">员工账号重置需联系店主在商户管理管理里面重置</div>
@@ -37,6 +37,7 @@ import Btn from './btn'
 				   this.$router.replace('/resetPassword')
 			},
 			sendMess(){
+					console.log('isLogin：'+global.isLogin)
 				var param = {"phoneNum":"13420109570","smsType":7}
 				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/sendSmsVerifyCode',param)
 					.then((data)=>{
@@ -54,20 +55,7 @@ import Btn from './btn'
 				 unPass:true,
 				 hadSended:false,
 				 next:false,
-			     tipsText: [
-			     	{
-			     		id:1,
-			     		text:"验证码不能为空"
-			     	},
-			     	{
-			     		id:2,
-			     		text:"验证码输入有误"
-			     	},
-			     	{
-			     		id:3,
-			     		text:"输入的用户名或密码有误"
-			     	}
-			     ]
+			     tipsText: ''
 			}
 		}
 	}

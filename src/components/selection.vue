@@ -85,7 +85,7 @@
 	}
 	
 	.selection-show{
-		border: 1px solid #e3e3e3;
+		/*border: 1px solid #e3e3e3;*/
 		/*padding:0 10px 0 0px;*/
 		text-align: left;
 		display: inline-block;

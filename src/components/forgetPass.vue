@@ -1,7 +1,7 @@
 <template>
 	<div class="forgetWrap">
 		<div class="bar">
-			<a href="/"><img src="../assets/login/back.png" /></a>
+			<a href="/otherPages"><img src="../assets/login/back.png" /></a>
 			<span>重置密码</span>
 		</div>
 		<div class="tab">

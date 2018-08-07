@@ -154,7 +154,9 @@ import { type, typeDetail} from '@/assets/type.js'
 			
 			},
 			toRegister(){
-				
+				 this.$router.push({
+          		 path: '/otherPages'
+          	 });
 				if(this.password1!=this.password2){
 					this.unPass = true,
 					this.password1 = this.password2=''
