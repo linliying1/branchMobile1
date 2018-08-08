@@ -82,17 +82,10 @@ export default {
 		   return true;
 		  } 
 		},
+
   	loginClick(){
   		
-			this.$cookieStore.setCookie( 'username' ,this.username,60);
-			if(!this.password){
-				this.$cookieStore.setCookie( 'password' ,this.$md5(this.password))
-			}
-//			global.isLogin = true
-			
-				 this.$router.push({
-          		 path: '/home'
-          	 });
+		
 		
 //			alert('读取cookie:+username:'+this.$cookieStore.getCookie('username')+'password:'+this.$cookieStore.getCookie( 'password'))
 //		this.$cookieStore.delCookie( 'username')
@@ -124,22 +117,35 @@ export default {
   			//通过验证，向后台发送登录请求
   			console.log('loginClick');
   			console.log('helloworld-Md5'+this.$md5(this.password))
+  			var md5Password = this.$md5(this.password);
   			
-				var param = {
-					"userName":this.username,
-					"password":this.$md5(this.password)
-				}
-//				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/login',param)
-//					.then((data)=>{
-//						console.log(data)
-//		      	 alert('登录成功！')  
-//	      		 this.$router.push({
-//        		 path: '/home'
-//        	 });
-//		      		
-//					},(err)=>{
-//						console.log(err)
-//					})
+				var param = "userName="+this.username+"&password="+md5Password;
+				
+				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/login',param,{ headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
+					.then((data)=>{
+						
+						console.log(data.data.returnCode);
+						if(data.data.returnCode == '000000'){
+							console.log(data);
+							
+//						将用户登录信息存进cookie
+							this.$cookieStore.setCookie( 'username' ,this.username,60);
+							if(this.password){
+								this.$cookieStore.setCookie( 'password' ,this.$md5(this.password))
+							}
+//           登录成功后跳转到主页
+	      			 this.$router.push({
+          			 path: '/home'
+          		 });
+							}else if(data.data.description){
+								this.unPass = true;
+			  				this.tipsText = data.data.description;
+			  			
+							}
+		      		
+					},(err)=>{
+						console.log(err)
+					})
 
 				
 			

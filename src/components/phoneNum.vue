@@ -1,9 +1,9 @@
 <template>
 	<div id="numberWrap" >
   			<p>使用注册时的手机号码找回</p>
-  			<p><input type="text" placeholder="请输入手机号码" v-model="phoneNumber"  @change="changeCount()"/></p>
-  			<p><input type="text" placeholder="请输入短信验证码" />
-  				<input type="button" :class="{'sended':hadSended}" value="获取验证码" @click="sendMess" />
+  			<p><input type="text" placeholder="请输入手机号码" @blur="testPhone" v-model="phoneNumber" maxlength="11"/></p>
+  			<p><input type="text" v-model="message" maxlength="4" placeholder="请输入短信验证码" />
+  				<input type="button" :class="{'sended':hadSended}" v-model="btnText" @click="sendMess" />
   			</p>
   			<div v-if="unPass" class="tips">
   				<img src="../assets/login/reminder.png" /><span>{{tipsText}}</span>
@@ -21,41 +21,115 @@ import Btn from './btn'
 		},
 		watch: {
 			phoneNumber(){
-				if(/^1\d{10}$/.test(this.phoneNumber) ){
+				if(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.phoneNumber) ){
 					this.hadSended = true
+					this.unPass = false;
+					this.flag = true
 				}else{
+					
 					this.hadSended = false
+//					this.tipsText = '请输入正确的手机号'
+				}
+			},
+			message(){
+				console.log(!this.unPass)
+				if(this.flag &&this.message){
+					this.next = true;
+				
+				}else{
+					this.next = false;
 				}
 			}
 		},
+		
 		http: {
-		  headers: {'Content-Type': 'application/json'}
+		  headers: {'Content-Type': 'application/x-www-form-urlencoded'}
 		},
 		methods: {
+			testPhone(){
+				if(!this.hadSended) {
+					this.unPass = true;
+					this.tipsText = '请输入正确的手机号'
+				}
+				
+				
+			},
 			toReset(){
-//				if('验证通过')
-				   this.$router.replace('/resetPassword')
+				
+				if(this.next){
+
+				var Param = "phoneNum="+this.phoneNumber+"&verifyCode="+this.message+"&smsType=7"
+				this.$http.post("http://120.24.71.32:8997/branch/rest/branchvue/checkVerifyCode",Param)
+					.then((data)=>{
+						
+						
+						if(data.data.returnCode == '000000'){
+							this.unPass = false;
+							this.$router.replace('/resetPassword')//下一步
+						}else{
+							this.unPass = true;
+							this.tipsText = data.data.description;
+						}
+		      		
+					},(err)=>{
+						console.log(err)
+					})
+				}
+//				   
 			},
 			sendMess(){
-					console.log('isLogin：'+global.isLogin)
-				var param = {"phoneNum":"13420109570","smsType":7}
-				this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/sendSmsVerifyCode',param)
+				if(this.hadSended ){
+					var param = "phoneNum="+this.phoneNumber+"&smsType=7";
+					this.$http.post('http://120.24.71.32:8997/branch/rest/branchvue/sendSmsVerifyCode',param)
 					.then((data)=>{
-						console.log(12345)
+						if(data.data.returnCode = '000000'){
+							console.log(data);
+							
+						       this.show = false;
+							   const TIME_COUNT = 60;   
+							   if (!this.timer) {    
+							   this.count = TIME_COUNT;    
+							   
+							   this.timer = setInterval(() => {    
+							    if (this.count > 0 && this.count <= TIME_COUNT) {     
+							    this.count--;    
+							    	this.btnText = this.count+' s'
+							    } else {     
+							    this.show = true;     
+							    clearInterval(this.timer);     
+							    this.timer = null;     
+							    this.hadSended = true;
+							    this.message = '';
+							    this.btnText = "重新发送";
+							    }    
+							   }, 500)    
+							   }
+														
+							
+							this.hadSended = false;//发送验证码后把按钮置灰色
+							
+						}
 		               
 					},(err)=>{
 						console.log(err)
 					})
+				}
 			}
 		},
 		data(){
 			return{
 				phoneNumber:'',
 				content:'下一步',
-				 unPass:true,
+				flag:false,
+				 unPass:false,
 				 hadSended:false,
 				 next:false,
-			     tipsText: ''
+			     tipsText: '',
+			     btnText: '获取验证码',
+			     message: '',
+			     count:'',
+			     timer: null,
+			     show: true
 			}
 		}
 	}
